@@ -7,6 +7,9 @@ MSA must include MN908947.3.
 Recreate the test data with:
 
 `git clone https://github.com/connor-lab/aln2type`
+
 `cd aln2type`
+
 `pip install .`
+
 `aln2type testdata/outputs/json_out testdata/outputs/output.csv MN908947.3 testdata/alignment/test.aln variant_definitions/variant_yaml/*.yml`
