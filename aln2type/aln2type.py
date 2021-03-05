@@ -373,10 +373,10 @@ def remove_terminal_gapns(seq):
 
 def go(args):
 
-    refseq = get_ref_seq(args.msa, args.refname)
+    refseq = get_ref_seq(args.msa, args.ref_name)
 
     if not refseq:
-        print(args.refname + " not found\n") 
+        print(args.ref_name + " not found\n") 
         sys.exit(1)
 
     variant_types = []
@@ -386,7 +386,7 @@ def go(args):
     typing_summary = []
     with open(args.msa) as f:
         for name, seq, qual in readfq(f):
-            if name == args.refname:
+            if name == args.ref_name:
                 continue
             else:
                 variants = update_variants(remove_terminal_gapns(seq.upper()), refseq)
@@ -398,9 +398,9 @@ def go(args):
 
                     typing_summary.append(sample_typing_summary)
 
-                    write_json(name, scored_variants, args.oj)
+                    write_json(name, scored_variants, args.json_outdir)
 
-    write_variant_types(typing_summary, args.ocsv)
+    write_variant_types(typing_summary, args.output_csv)
     
                     
                     
