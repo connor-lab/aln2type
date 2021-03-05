@@ -12,4 +12,6 @@ Recreate the test data with:
 
 `pip install .`
 
+`git clone https://github.com/phe-genomics/variant_definitions`
+
 `aln2type testdata/outputs/json_out testdata/outputs/output.csv MN908947.3 testdata/alignment/test.aln variant_definitions/variant_yaml/*.yml`
