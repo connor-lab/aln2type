@@ -4,6 +4,10 @@
 import setuptools
 from aln2type import version
 
+requirements = [
+    "pyyaml"
+]
+
 setuptools.setup(
     name="aln2type",
     version=version.__version__,
@@ -19,7 +23,7 @@ setuptools.setup(
     maintainer_email="bullmj2@gmail.com",
 
     packages=setuptools.find_packages(),
-    #install_requires=requirements,
+    install_requires=requirements,
 
     entry_points = {
         'console_scripts': [
