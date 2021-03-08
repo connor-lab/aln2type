@@ -298,13 +298,24 @@ def type_variants(name, f_variants, variant_types):
         
         for name,props in variant_lists.items():
 
-            calls = { 'mutation_ref_calls' : 0, 'indel_ref_calls' : 0, 'mutation_calls' : 0, 'indel_calls' : 0, 'no_calls' : 0 }
+            calls_keys = [
+                'mutation_ref_calls', 
+                'indel_ref_calls', 
+                'mutation_calls', 
+                'mutation_mixed_calls', 
+                'indel_calls', 
+                'no_calls'
+                ]
+
+            calls = dict.fromkeys(calls_keys, 0)
      
             for idx,var in enumerate(props['variants']):
                 
                 sample_var = formatted_vars_s.get(var['one-based-reference-position'])
 
                 if sample_var:
+
+                    variant_lists[name]['variants'][idx]['sample-call'] = ','.join(sample_var['variant-base'])
                
                     if sample_var['type'] == 'no-call':
                         variant_lists[name]['variants'][idx]['status'] = 'no-call'
@@ -313,17 +324,22 @@ def type_variants(name, f_variants, variant_types):
                     elif var['variant-base'] in sample_var['variant-base']:
 
                         if len(sample_var['variant-base']) > 1:
+                            
                             variant_lists[name]['variants'][idx]['status'] = 'detect-mixed'
-                        else:
-                            variant_lists[name]['variants'][idx]['status'] = 'detect'
-                        
-                        variant_lists[name]['variants'][idx]['sample-call'] = ','.join(sample_var['variant-base'])
 
-                        if var['type'] == 'insertion' or var['type'] == 'deletion':
-                            calls['indel_calls'] += 1
+                            calls['mutation_mixed_calls'] += 1
+
+                        elif len(sample_var['variant-base']) == 1:
+                            
+                            variant_lists[name]['variants'][idx]['status'] = 'detect'
+
+                            if var['type'] == 'insertion' or var['type'] == 'deletion':
+                                
+                                calls['indel_calls'] += 1
+
+                            else:
+                                calls['mutation_calls'] += 1
                         
-                        else:
-                            calls['mutation_calls'] += 1
                                            
                 else:
                     if var['reference-base'] == var['variant-base']:
