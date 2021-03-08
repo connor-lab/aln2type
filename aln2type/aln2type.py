@@ -143,7 +143,7 @@ def update_variants(qseq, rseq):
             elif rseq[qpos] == "-":
                 # insertion
                 ins.append(ins_aware_pos)
-                
+            
             elif re.match('[^ATGCRYSWKMBDHV]', qbase):
                 nocalls.append(ins_aware_pos)
 
@@ -339,7 +339,7 @@ def type_variants(name, f_variants, variant_types):
                         
                         else:
                             calls['mutation_ref_calls'] += 1
-
+                     
             sample_type['typing'][vidx]['sample-typing-result'][name] = { 'calls' : calls, 
                                                   'calling-definition' : props['calling-definition'],
                                                   'variants' : variant_lists[name]['variants'] }
