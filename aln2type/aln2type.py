@@ -130,6 +130,7 @@ def update_variants(qseq, rseq):
     dels = []
     ins = []
     snps = []
+    nocalls = []
 
     for qpos, qbase in enumerate(qseq):
         ins_aware_pos = qpos - len(ins)
@@ -143,6 +144,9 @@ def update_variants(qseq, rseq):
                 # insertion
                 ins.append(ins_aware_pos)
                 
+            elif re.match('[^ATGCRYSWKMBDHV]', qbase):
+                nocalls.append(ins_aware_pos)
+
             else:
                 # snp
                 snps.append(ins_aware_pos)
@@ -171,6 +175,24 @@ def update_variants(qseq, rseq):
                     "variant-base" : var_alt_seq, 
                     "ins-corrected-position" : c_position, 
                     "var-length" : length }
+
+            all_vars.append(var)
+
+    if nocalls:
+        for start in nocalls:
+            ins_correction = len([i for i in ins if i < start])
+
+            c_position = start + ins_correction
+            
+            var_ref_seq = rseq[c_position]
+            var_alt_seq = qseq[c_position]
+
+            var = { "type" : "no-call", 
+                    "reference-base" : var_ref_seq, 
+                    "position" : start, 
+                    "variant-base" : var_alt_seq, 
+                    "ins-corrected-position" : c_position, 
+                    "var-length" : 1 }
 
             all_vars.append(var)
 
@@ -284,7 +306,7 @@ def type_variants(name, f_variants, variant_types):
 
                 if sample_var:
                
-                    if len(set(sample_var['variant-base'])) == 1 and "N" in sample_var['variant-base']:
+                    if sample_var['type'] == 'no-call':
                         variant_lists[name]['variants'][idx]['status'] = 'no-call'
                         calls['no_calls'] += 1
 
