@@ -418,12 +418,14 @@ def go(args):
 
     typing_summary = []
     with open(args.msa) as f:
+        
         for name, seq, qual in readfq(f):
             if name == args.ref_name:
                 continue
             else:
                 variants = update_variants(remove_terminal_gapns(seq.upper()), refseq)
 
+                print(name)
                 if variants:
                     typed_variants = type_variants(name, variants, variant_types)
                     
