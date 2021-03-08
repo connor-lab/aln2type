@@ -370,7 +370,7 @@ def score_typing(sample_type):
 
 
 def normalise_fn(name):
-    return re.sub(r'[^A-Za-z1-9.]', '_', name)
+    return re.sub(r'[^A-Za-z0-9.-]', '_', name)
 
 def write_json(name, typing_data, json_outdir):
 
