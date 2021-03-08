@@ -298,7 +298,7 @@ def type_variants(name, f_variants, variant_types):
         
         for name,props in variant_lists.items():
 
-            calls = { 'ref_calls' : 0, 'mutation_calls' : 0, 'indel_calls' : 0, 'no_calls' : 0 }
+            calls = { 'mutation_ref_calls' : 0, 'indel_ref_calls' : 0, 'mutation_calls' : 0, 'indel_calls' : 0, 'no_calls' : 0 }
      
             for idx,var in enumerate(props['variants']):
                 
@@ -319,15 +319,26 @@ def type_variants(name, f_variants, variant_types):
                         
                         variant_lists[name]['variants'][idx]['sample-call'] = ','.join(sample_var['variant-base'])
 
-                        if sample_var['type'] in ['ins', 'del']:
+                        if var['type'] == 'insertion' or var['type'] == 'deletion':
                             calls['indel_calls'] += 1
                         
                         else:
                             calls['mutation_calls'] += 1
                                            
                 else:
-                    variant_lists[name]['variants'][idx]['status'] = 'reference'
-                    calls['ref_calls'] += 1
+                    if var['reference-base'] == var['variant-base']:
+                        variant_lists[name]['variants'][idx]['status'] = 'detect'
+
+                        calls['mutation_calls'] += 1
+
+                    else:
+                        variant_lists[name]['variants'][idx]['status'] = 'no-detect'
+
+                        if var['type'] == 'insertion' or var['type'] == 'deletion':
+                            calls['indel_ref_calls'] += 1
+                        
+                        else:
+                            calls['mutation_ref_calls'] += 1
 
             sample_type['typing'][vidx]['sample-typing-result'][name] = { 'calls' : calls, 
                                                   'calling-definition' : props['calling-definition'],
