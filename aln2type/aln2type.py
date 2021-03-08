@@ -401,6 +401,24 @@ def write_variant_types(typing_summary, output_csv):
         for row in typing_summary:
             writer.writerow(row)
 
+def write_sample_variant_csv(name, variants, sample_csv_outdir):
+    csvfilename = os.path.join(os.path.abspath(sample_csv_outdir), normalise_fn(name) + '.csv')
+
+    fieldnames = [
+        'one-based-reference-position',
+        'reference-base',
+        'variant-base',
+        'type'
+    ]
+
+    with open(csvfilename, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in variants:
+            csv_row = { k: row[k] for k in fieldnames }
+            csv_row['variant-base'] = '|'.join(csv_row['variant-base'])
+            writer.writerow(csv_row)
+
 def remove_terminal_gapns(seq):
     return re.sub(r'(N|-)*$', '', seq)
 
@@ -434,6 +452,8 @@ def go(args):
                     typing_summary.append(sample_typing_summary)
 
                     write_json(name, scored_variants, args.json_outdir)
+
+                    write_sample_variant_csv(name, variants, args.sample_csv_outdir)
 
     write_variant_types(typing_summary, args.output_csv)
     

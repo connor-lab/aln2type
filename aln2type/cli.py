@@ -4,6 +4,7 @@ from .aln2type import go
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("json_outdir", help="Output directory for typing JSON")
+    parser.add_argument("sample_csv_outdir", help="Output directory for sample variant CSVs")
     parser.add_argument("output_csv", help="Output summary CSV file")
     parser.add_argument("ref_name", help="Name of reference sequence")
     parser.add_argument("msa", help="Path to MSA")
