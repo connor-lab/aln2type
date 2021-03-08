@@ -362,7 +362,7 @@ def score_typing(sample_type):
         
         potential_calling_defs = []
         for definition in s_defs:
-             if (vtype['sample-typing-result'][definition['name']]['calls']['ref_calls'] <= definition['calling-definition']['allowed-wildtype'] and
+             if (vtype['sample-typing-result'][definition['name']]['calls']['mutation_ref_calls'] <= definition['calling-definition']['allowed-wildtype'] and
                     vtype['sample-typing-result'][definition['name']]['calls']['mutation_calls'] >= definition['calling-definition']['mutations-required'] and 
                         vtype['sample-typing-result'][definition['name']]['calls']['indel_calls'] >= definition['calling-definition']['indels-required'] ):
                             potential_calling_defs.append(definition['level'])
