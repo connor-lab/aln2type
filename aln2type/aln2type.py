@@ -333,13 +333,21 @@ def type_variants(name, f_variants, variant_types):
 
                 if sample_var:
 
-                    variant_lists[name]['variants'][idx]['sample-call'] = ','.join(sample_var['variant-base'])
+                    if sample_var['type'] == 'mnp' and var['type'] == 'SNP':
+                        
+                        sample_variant_base = [ i[0] for i in sample_var['variant-base'] ]
+
+                    else:
+                        
+                        sample_variant_base = sample_var['variant-base']
+                    
+                    variant_lists[name]['variants'][idx]['sample-call'] = ','.join(sample_variant_base)
                
                     if sample_var['type'] == 'no-call':
                         variant_lists[name]['variants'][idx]['status'] = 'no-call'
                         calls['no_calls'] += 1
 
-                    elif var['variant-base'] in sample_var['variant-base']:
+                    elif var['variant-base'] in sample_variant_base:
 
                         if len(sample_var['variant-base']) > 1:
                             
