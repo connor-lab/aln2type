@@ -476,17 +476,16 @@ def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for row in variants:
+            if row['type'] == 'mnp-snp':
+                continue
+
+            if row['type'] == 'no-call' and csv_N == False:
+                continue
             
             csv_row = { k: row[k] for k in fieldnames }
             csv_row['variant-base'] = '|'.join(csv_row['variant-base'])
-            
-            if csv_row['type'] == 'no-call':
-                if csv_N == True:
-                    writer.writerow(csv_row)
-                else:
-                    continue
-            else:
-                writer.writerow(csv_row)
+
+            writer.writerow(csv_row)
 
 def remove_terminal_gapns(seq):
     return re.sub(r'(N|-)*$', '', seq)
