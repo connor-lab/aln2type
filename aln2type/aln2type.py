@@ -498,7 +498,7 @@ def go(args):
 
                     write_sample_variant_csv(name, variants, args.sample_csv_outdir, args.csv_N)
 
-    write_variant_types(typing_summary, args.output_csv)
+    write_variant_types(typing_summary, args.summary_csv_outfile)
     
                     
                     
