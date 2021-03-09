@@ -431,8 +431,13 @@ def write_variant_types(typing_summary, output_csv):
         for row in typing_summary:
             writer.writerow(row)
 
-def write_sample_variant_csv(name, variants, sample_csv_outdir):
-    csvfilename = os.path.join(os.path.abspath(sample_csv_outdir), normalise_fn(name) + '.csv')
+def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
+
+    csv_outpath = os.path.abspath(sample_csv_outdir)
+
+    make_dir(csv_outpath)
+
+    csvfilename = os.path.join(csv_outpath, normalise_fn(name) + '.csv')
 
     fieldnames = [
         'one-based-reference-position',
@@ -445,9 +450,17 @@ def write_sample_variant_csv(name, variants, sample_csv_outdir):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for row in variants:
+            
             csv_row = { k: row[k] for k in fieldnames }
             csv_row['variant-base'] = '|'.join(csv_row['variant-base'])
-            writer.writerow(csv_row)
+            
+            if csv_row['type'] == 'no-call':
+                if csv_N == True:
+                    writer.writerow(csv_row)
+                else:
+                    continue
+            else:
+                writer.writerow(csv_row)
 
 def remove_terminal_gapns(seq):
     return re.sub(r'(N|-)*$', '', seq)
