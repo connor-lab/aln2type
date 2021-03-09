@@ -395,16 +395,30 @@ def score_typing(sample_type):
 
     return typing_summary, sample_type
 
-
 def normalise_fn(name):
     return re.sub(r'[^A-Za-z0-9.-]', '_', name)
 
-def write_json(name, typing_data, json_outdir):
+def make_dir(fp):
+    if not os.path.exists(fp):
+        os.makedirs(fp)
 
-    jsonfilename = os.path.join(os.path.abspath(json_outdir), normalise_fn(name) + '.json.gz')
+def write_json(name, typing_data, json_outdir, no_gzip_json=False):
 
-    with gzip.open(jsonfilename, 'wt', encoding='UTF-8') as zipfile:
-        json.dump(typing_data, zipfile)
+    json_outpath = os.path.abspath(json_outdir)
+
+    make_dir(json_outpath)
+
+    
+
+    if no_gzip_json:
+        jsonfilename = os.path.join(json_outpath, normalise_fn(name) + '.json')
+        with open(jsonfilename, 'w', encoding='UTF-8') as zipfile:
+            json.dump(typing_data, zipfile, indent = 4)
+    
+    else:
+        jsonfilename = os.path.join(json_outpath, normalise_fn(name) + '.json.gz')
+        with gzip.open(jsonfilename, 'wt', encoding='UTF-8') as zipfile:
+            json.dump(typing_data, zipfile, indent = 4)
 
 def write_variant_types(typing_summary, output_csv):
     csvfilename = os.path.abspath(output_csv)
