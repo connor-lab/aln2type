@@ -494,9 +494,9 @@ def go(args):
 
                     typing_summary.append(sample_typing_summary)
 
-                    write_json(name, scored_variants, args.json_outdir)
+                    write_json(name, scored_variants, args.json_outdir, args.no_gzip_json)
 
-                    write_sample_variant_csv(name, variants, args.sample_csv_outdir)
+                    write_sample_variant_csv(name, variants, args.sample_csv_outdir, args.csv_N)
 
     write_variant_types(typing_summary, args.output_csv)
     
