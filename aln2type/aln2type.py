@@ -210,7 +210,7 @@ def update_variants(qseq, rseq):
 
             if length > 1:
                 var = {'type' : 'mnp'}
-            
+
             else:
                 var = {'type' : 'snp'}
 
@@ -221,6 +221,24 @@ def update_variants(qseq, rseq):
                     "var-length" : length })
 
             all_vars.append(var)
+
+            if var['type'] == 'mnp':
+                for idx,mnp_variant_base in enumerate(var['variant-base'][1:], 1):
+
+                    mnp_snp_ref_seq = var['reference-base'][idx]
+                    mnp_snp_alt_seq = mnp_variant_base
+
+                    mnp_position = var['position'] + idx
+                    mnp_c_position = var['ins-corrected-position'] + idx
+
+                    mnpvar = { "type" : "mnp-snp", 
+                            "reference-base" : mnp_snp_ref_seq, 
+                            "position" : mnp_position, 
+                            "variant-base" : mnp_snp_alt_seq, 
+                            "ins-corrected-position" : mnp_c_position, 
+                            "var-length" : 1 }
+
+                    all_vars.append(mnpvar)
 
     if ins:
         for start,length in group_ins(ins):
