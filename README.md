@@ -4,7 +4,18 @@ Use [variant_definitions](https://github.com/phe-genomics/variant_definitions) t
 
 MSA must include MN908947.3 to correctly label variant positions.
 
-## Help
+#### Install
+
+`git clone https://github.com/connor-lab/aln2type`
+
+`cd aln2type`
+
+`pip install .`
+
+`git clone https://github.com/phe-genomics/variant_definitions`
+
+
+#### Help
 ```
 usage: aln2type [-h] [--csv_N] [--no_gzip_json]
                 json_outdir sample_csv_outdir summary_csv_outfile ref_name msa
@@ -24,16 +35,5 @@ optional arguments:
   --no_gzip_json       Don't gzip typing JSON files
 ```
 
-## Install
-
-`git clone https://github.com/connor-lab/aln2type`
-
-`cd aln2type`
-
-`pip install .`
-
-`git clone https://github.com/phe-genomics/variant_definitions`
-
-
-## Run
+#### Run
 `aln2type sample_json_out sample_csv_out typing_summary.csv MN908947.3 sars_cov_2.aln variant_definitions/variant_yaml/*.yml`
