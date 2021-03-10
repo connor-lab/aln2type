@@ -391,8 +391,10 @@ def type_variants(name, f_variants, variant_types):
 
 def score_typing(sample_type):
 
-    typing_summary = { 'sample_id' : sample_type['sample_id'] }  
+    sample_summary = []
     for vtype in sample_type['typing']:
+
+        sample_type_summary = { 'sample_id' : sample_type['sample_id'] }
 
         defs = []
 
@@ -411,15 +413,27 @@ def score_typing(sample_type):
 
         if potential_calling_defs:
             vtype['sample-typing-result']['variant-status'] = potential_calling_defs[-1]
-        
+
+            sample_type_summary.update(
+                {
+                    'phe-label' : vtype['sample-typing-summary']['phe-label'],
+                    'unique-id' : vtype['sample-typing-summary']['unique-id'],
+                    'status' : vtype['sample-typing-result']['variant-status'],
+                    'mutation-ref-calls': vtype['sample-typing-result'][definition['name']]['calls']['mutation_ref_calls'],
+                    'mutation-mixed-calls': vtype['sample-typing-result'][definition['name']]['calls']['mutation_mixed_calls'],
+                    'mutation-calls': vtype['sample-typing-result'][definition['name']]['calls']['mutation_calls'],
+                    'indel-ref-calls': vtype['sample-typing-result'][definition['name']]['calls']['indel_ref_calls'],
+                    'indel-calls': vtype['sample-typing-result'][definition['name']]['calls']['indel_calls'],
+                    'no-calls': vtype['sample-typing-result'][definition['name']]['calls']['no_calls']
+                }
+            )
+
+            sample_summary.append(sample_type_summary)
+
         else:
             vtype['sample-typing-result']['variant-status'] = None
 
-        typing_summary_header = vtype['sample-typing-summary']['phe-label'] + '|' + vtype['sample-typing-summary']['unique-id']
-
-        typing_summary.update({ typing_summary_header : vtype['sample-typing-result']['variant-status'] } )
-
-    return typing_summary, sample_type
+    return sample_summary, sample_type
 
 def normalise_fn(name):
     return re.sub(r'[^A-Za-z0-9.-]', '_', name)
@@ -515,9 +529,9 @@ def go(args):
                 if variants:
                     typed_variants = type_variants(name, variants, variant_types)
                     
-                    sample_typing_summary, scored_variants = score_typing(typed_variants)
+                    sample_summary, scored_variants = score_typing(typed_variants)
 
-                    typing_summary.append(sample_typing_summary)
+                    typing_summary.extend(sample_summary)
 
                     write_json(name, scored_variants, args.json_outdir, args.no_gzip_json)
 
