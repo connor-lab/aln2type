@@ -461,15 +461,20 @@ def write_json(name, typing_data, json_outdir, no_gzip_json=False):
             json.dump(typing_data, zipfile, indent = 4)
 
 def write_variant_types(typing_summary, output_csv):
-    csvfilename = os.path.abspath(output_csv)
+    # It is theoretically possible that a set of genomes will not contain any VoCs
+    # This checks to see if the typing summary contains information before writing the csv.
+    if typing_summary:
+        csvfilename = os.path.abspath(output_csv)
 
-    fieldnames = list(typing_summary[0].keys())
+        fieldnames = list(typing_summary[0].keys())
 
-    with open(csvfilename, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in typing_summary:
-            writer.writerow(row)
+        with open(csvfilename, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in typing_summary:
+                writer.writerow(row)
+    else:
+        print ("No Variants Identified for these sequences from these definitions.")
 
 def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
 
