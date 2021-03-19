@@ -333,12 +333,29 @@ def type_variants(name, f_variants, variant_types):
 
                 if sample_var:
 
+                    # MNP is found in sample and subordinate SNP is part of variant definition
                     if sample_var['type'] == 'mnp' and var['type'] == 'SNP':
                         
                         sample_variant_base = [ i[0] for i in sample_var['variant-base'] ]
 
+
+                    # MNP in definition contains a reference base and sample variant base is subordinate to it
+                    elif ( sample_var['type'] == 'mnp' or sample_var['type'] == 'snp' ) and var['type'] == 'MNP':
+
+                        # Definition MNP is longer than the one from sample grab the reference bases from the definition 
+                        if len(var['variant-base']) > len(sample_var['variant-base'][0]):
+
+                            extra_mnp_length = len(sample_var['variant-base'][0]) - len(var['variant-base'])
+
+                            extra_mnp_bases = var['variant-base'][-extra_mnp_length]
+
+                            sample_variant_base = [ i + extra_mnp_bases for i in sample_var['variant-base'] ]
+
+                        else: 
+                            sample_variant_base = sample_var['variant-base']
+
+                    # All other non-special cases
                     else:
-                        
                         sample_variant_base = sample_var['variant-base']
                     
                     variant_lists[name]['variants'][idx]['sample-call'] = ','.join(sample_variant_base)
