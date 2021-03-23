@@ -406,7 +406,7 @@ def type_variants(name, f_variants, variant_types):
     return sample_type
 
 
-def score_typing(sample_type):
+def score_typing(sample_type, output_unclassified=False):
 
     sample_summary = []
     for vtype in sample_type['typing']:
@@ -449,6 +449,25 @@ def score_typing(sample_type):
 
         else:
             vtype['sample-typing-result']['variant-status'] = None
+
+    if output_unclassified:
+        
+        called_types = [t['sample-typing-result']['variant-status'] for t in sample_type['typing']]
+      
+        if called_types.count(None) == len(called_types):
+            sample_summary.append(
+                {   'sample_id' : sample_type['sample_id'],
+                    'phe-label' : 'unclassified',
+                    'unique-id' : 'unclassified',
+                    'status' : 'unclassified',
+                    'mutation-ref-calls': None,
+                    'mutation-mixed-calls': None,
+                    'mutation-calls': None,
+                    'indel-ref-calls': None,
+                    'indel-calls': None,
+                    'no-calls': None
+                }
+            )
 
     return sample_summary, sample_type
 
@@ -551,7 +570,7 @@ def go(args):
                 if variants:
                     typed_variants = type_variants(name, variants, variant_types)
                     
-                    sample_summary, scored_variants = score_typing(typed_variants)
+                    sample_summary, scored_variants = score_typing(typed_variants, args.output_unclassified)
 
                     typing_summary.extend(sample_summary)
 
