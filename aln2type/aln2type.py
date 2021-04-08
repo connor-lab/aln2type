@@ -7,6 +7,7 @@ import re
 import sys
 from .readfq import readfq
 from .scheme import read_scheme_yaml
+from .vcf_annotator import Annotator
 from operator import itemgetter
 from itertools import groupby, product
 from collections import OrderedDict
@@ -43,7 +44,7 @@ def deconvolute_IUPAC(var):
     for element in product(*var_iupac):
         var_product.append(''.join(element))
 
-    var['variant-base'] = var_product
+    var['iupac-variant-bases'] = var_product
 
     return var
 
@@ -267,23 +268,29 @@ def update_variants(qseq, rseq):
         fixed_vars = fix_overlapping_vars(all_vars, rseq, qseq)
 
         for var in fixed_vars:
-           
-            deconvolute_IUPAC(var)
 
-            # Make 1-based
             ob_ins_c_pos = var.pop('ins-corrected-position')
             var['ob-ins-corrected-position'] = ob_ins_c_pos + 1 
 
             ob_pos = var.pop('position')
-            var['one-based-reference-position'] = ob_pos + 1 
+            var['one-based-reference-position'] = ob_pos + 1
 
-        # sort by positions
-        fixed_vars_s = sorted(fixed_vars, key=lambda x: x['one-based-reference-position'])
+            deconvolute_IUPAC(var)
 
-        return fixed_vars_s
+        return sorted(fixed_vars, key=lambda x: x['one-based-reference-position'])
 
     else:
         return None
+
+
+def annotate_translation(gb, vars):
+    
+    annotator = Annotator(gb_file=gb, vcf_records=vars)
+    annotator.annotate_records()
+
+    annotated_vars = annotator.get_vcf_records()
+
+    return annotated_vars
 
 def type_variants(name, f_variants, variant_types):
 
@@ -366,13 +373,13 @@ def type_variants(name, f_variants, variant_types):
 
                     elif var['variant-base'] in sample_variant_base:
 
-                        if len(sample_var['variant-base']) > 1:
+                        if len(sample_variant_base) > 1:
                             
                             variant_lists[name]['variants'][idx]['status'] = 'detect-mixed'
 
                             calls['mutation_mixed_calls'] += 1
 
-                        elif len(sample_var['variant-base']) == 1:
+                        elif len(sample_variant_base) == 1:
                             
                             variant_lists[name]['variants'][idx]['status'] = 'detect'
 
@@ -520,25 +527,24 @@ def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
 
     csvfilename = os.path.join(csv_outpath, normalise_fn(name) + '.csv')
 
-    fieldnames = [
-        'one-based-reference-position',
-        'reference-base',
-        'variant-base',
-        'type'
-    ]
+    all_fieldnames = list(max(variants, key=len).keys())
+
+    rejected_fields = ['ob-ins-corrected-position']
+
+    fieldnames = [ i for i in all_fieldnames if i not in rejected_fields ]
 
     with open(csvfilename, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for row in variants:
-            if row['type'] == 'mnp-snp':
-                continue
+            #if row['type'] == 'mnp-snp':
+            #    continue
 
             if row['type'] == 'no-call' and csv_N == False:
                 continue
             
-            csv_row = { k: row[k] for k in fieldnames }
-            csv_row['variant-base'] = '|'.join(csv_row['variant-base'])
+            csv_row = { k: row[k] for k in row if k not in rejected_fields }
+            csv_row['iupac-variant-bases'] = '|'.join(csv_row['iupac-variant-bases'])
 
             writer.writerow(csv_row)
 
@@ -576,7 +582,13 @@ def go(args):
 
                     write_json(name, scored_variants, args.json_outdir, args.no_gzip_json)
 
-                    write_sample_variant_csv(name, variants, args.sample_csv_outdir, args.csv_N)
+                    if args.gb:
+                        annotated_variants = annotate_translation(args.gb, variants)
+                        
+                        write_sample_variant_csv(name, annotated_variants, args.sample_csv_outdir, args.csv_N)
+
+                    else:
+                        write_sample_variant_csv(name, variants, args.sample_csv_outdir, args.csv_N)
 
     write_variant_types(typing_summary, args.summary_csv_outfile)
     
