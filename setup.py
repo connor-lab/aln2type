@@ -5,7 +5,8 @@ import setuptools
 from aln2type import version
 
 requirements = [
-    "pyyaml"
+    "pyyaml",
+    "biopython"
 ]
 
 setuptools.setup(
