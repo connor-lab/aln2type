@@ -33,9 +33,10 @@ class Annotator(object):
     def fix_codon_mnp(self, vcf_records):
         fixed_records = []
         for record in vcf_records:
-            if record['type'] == 'mnp':
-
-                self.__gb.index = record['one-based-reference-position']
+            
+            self.__gb.index = record['one-based-reference-position']
+            
+            if record['type'] == 'mnp' and self.__gb.feature_exists:
 
                 # Determine codon information
                 codon = self.__gb.codon_by_position(record['one-based-reference-position'])
@@ -106,7 +107,7 @@ class Annotator(object):
             else:
                 self.__gb.index = int(record['one-based-reference-position'])
 
-
+            print(record)
             # Set defaults
             record['RefCodon'] = None
             record['AltCodon'] = None
