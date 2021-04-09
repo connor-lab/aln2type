@@ -17,22 +17,26 @@ MSA must include MN908947.3 to correctly label variant positions.
 
 #### Help
 ```
-usage: aln2type [-h] [--csv_N] [--no_gzip_json]
+usage: aln2type [-h] [--csv_N] [--no_gzip_json] [--output_unclassified]
+                [--gb GB]
                 json_outdir sample_csv_outdir summary_csv_outfile ref_name msa
                 typing_yaml [typing_yaml ...]
 
 positional arguments:
-  json_outdir          Output directory for typing JSON
-  sample_csv_outdir    Output directory for sample variant CSVs
-  summary_csv_outfile  Output summary CSV file
-  ref_name             Name of reference sequence in MSA
-  msa                  Path to MSA
-  typing_yaml          Path to Variant definition YAML files
+  json_outdir           Output directory for typing JSON
+  sample_csv_outdir     Output directory for sample variant CSVs
+  summary_csv_outfile   Output summary CSV file
+  ref_name              Name of reference sequence in MSA
+  msa                   Path to MSA
+  typing_yaml           Path to Variant definition YAML files
 
 optional arguments:
-  -h, --help           show this help message and exit
-  --csv_N              Include Ns in sample variant CSVs
-  --no_gzip_json       Don't gzip typing JSON files
+  -h, --help            show this help message and exit
+  --csv_N               Include Ns in sample variant CSVs
+  --no_gzip_json        Don't gzip typing JSON files
+  --output_unclassified
+                        Retain unclassified samples in summary CSV
+  --gb GB               Path to annotation GenBank
 ```
 
 #### Run
