@@ -107,7 +107,6 @@ class Annotator(object):
             else:
                 self.__gb.index = int(record['one-based-reference-position'])
 
-            print(record)
             # Set defaults
             record['RefCodon'] = None
             record['AltCodon'] = None

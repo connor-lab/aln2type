@@ -533,6 +533,8 @@ def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
 
     fieldnames = [ i for i in all_fieldnames if i not in rejected_fields ]
 
+    fieldnames.insert(0, 'sampleID')
+
     with open(csvfilename, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -545,6 +547,7 @@ def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
             
             csv_row = { k: row[k] for k in row if k not in rejected_fields }
             csv_row['iupac-variant-bases'] = '|'.join(csv_row['iupac-variant-bases'])
+            csv_row['sampleID'] = name
 
             writer.writerow(csv_row)
 
