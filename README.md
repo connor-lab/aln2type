@@ -18,7 +18,7 @@ MSA must include MN908947.3 to correctly label variant positions.
 #### Help
 ```
 usage: aln2type [-h] [--csv_N] [--no_gzip_json] [--output_unclassified]
-                [--gb GB]
+                [--no_call_deletion] [--gb GB]
                 json_outdir sample_csv_outdir summary_csv_outfile ref_name msa
                 typing_yaml [typing_yaml ...]
 
@@ -36,6 +36,8 @@ optional arguments:
   --no_gzip_json        Don't gzip typing JSON files
   --output_unclassified
                         Retain unclassified samples in summary CSV
+  --no_call_deletion    Allow deleted positions to be treated as no-calls not
+                        ref
   --gb GB               Path to annotation GenBank
 ```
 

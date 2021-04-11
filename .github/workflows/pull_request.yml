@@ -11,6 +11,7 @@ jobs:
     - uses: actions/checkout@main
     - name: create artifacts dir to save test logs
       run: mkdir artifacts
+    - name: install aln2type
       run: |
        python -m pip install .
     - name: prepare variant definitions

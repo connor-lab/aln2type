@@ -6,6 +6,7 @@ def parse_args():
     parser.add_argument("--csv_N", action='store_true', required=False, help="Include Ns in sample variant CSVs")
     parser.add_argument("--no_gzip_json", action='store_true', required=False, help="Don't gzip typing JSON files")
     parser.add_argument("--output_unclassified", action='store_true', required=False, help="Retain unclassified samples in summary CSV")
+    parser.add_argument("--no_call_deletion", action='store_true', required=False, help="Allow deleted positions to be treated as no-calls not ref")
     parser.add_argument("--gb", required=False, help="Path to annotation GenBank")
     parser.add_argument("json_outdir", help="Output directory for typing JSON")
     parser.add_argument("sample_csv_outdir", help="Output directory for sample variant CSVs")
