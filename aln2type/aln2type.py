@@ -292,12 +292,22 @@ def annotate_translation(gb, vars):
 
     return annotated_vars
 
-def type_variants(name, f_variants, variant_types):
+def type_variants(name, f_variants, variant_types, no_call_deletion=False):
 
     # { position: {variant dict}}
     formatted_vars_s = dict(zip([ i['one-based-reference-position'] for i in f_variants ], f_variants))
 
     sample_type = { 'sample_id' : name, 'typing' : [] }
+
+    deleted_positions = [ 
+        list(
+            range(
+                i['one-based-reference-position'] + 1, 
+                i['one-based-reference-position'] + i['var-length']
+            )
+        ) 
+        for i in f_variants if i['type'] == 'del'
+        ]
 
     for vidx,vtype in enumerate(variant_types):
 
@@ -329,7 +339,8 @@ def type_variants(name, f_variants, variant_types):
                 'mutation_calls', 
                 'mutation_mixed_calls', 
                 'indel_calls', 
-                'no_calls'
+                'no_calls',
+                'no_call_deletion'
                 ]
 
             calls = dict.fromkeys(calls_keys, 0)
@@ -360,6 +371,7 @@ def type_variants(name, f_variants, variant_types):
 
                         else: 
                             sample_variant_base = sample_var['iupac-variant-bases']
+
 
                     # All other non-special cases
                     else:
@@ -396,6 +408,11 @@ def type_variants(name, f_variants, variant_types):
                         variant_lists[name]['variants'][idx]['status'] = 'detect'
 
                         calls['mutation_calls'] += 1
+
+                    elif no_call_deletion and var['one-based-reference-position'] in [i for s in deleted_positions for i in s]:
+                        variant_lists[name]['variants'][idx]['status'] = 'no-call-deletion'
+                    
+                        calls['no_call_deletion'] += 1
 
                     else:
                         variant_lists[name]['variants'][idx]['status'] = 'no-detect'
@@ -448,7 +465,8 @@ def score_typing(sample_type, output_unclassified=False):
                     'mutation-calls': vtype['sample-typing-result'][definition['name']]['calls']['mutation_calls'],
                     'indel-ref-calls': vtype['sample-typing-result'][definition['name']]['calls']['indel_ref_calls'],
                     'indel-calls': vtype['sample-typing-result'][definition['name']]['calls']['indel_calls'],
-                    'no-calls': vtype['sample-typing-result'][definition['name']]['calls']['no_calls']
+                    'no-calls': vtype['sample-typing-result'][definition['name']]['calls']['no_calls'],
+                    'no-calls-deletion': vtype['sample-typing-result'][definition['name']]['calls']['no_call_deletion']
                 }
             )
 
@@ -472,7 +490,8 @@ def score_typing(sample_type, output_unclassified=False):
                     'mutation-calls': None,
                     'indel-ref-calls': None,
                     'indel-calls': None,
-                    'no-calls': None
+                    'no-calls': None,
+                    'no-calls-deletion': None
                 }
             )
 
@@ -577,7 +596,7 @@ def go(args):
 
                 print(name)
                 if variants:
-                    typed_variants = type_variants(name, variants, variant_types)
+                    typed_variants = type_variants(name, variants, variant_types, args.no_call_deletion)
                     
                     sample_summary, scored_variants = score_typing(typed_variants, args.output_unclassified)
 
