@@ -38,10 +38,10 @@ if ! git diff --stat --no-index new_pr main > diffs.txt ; then
   echo "test failed: differences found between PR and previous release" >> artifacts/artifact.log
   echo see diffs.txt >> artifacts/artifact.log 
   cp diffs.txt artifacts/
-  mv new_pr main artifacts
+  mv new_pr main artifacts/
   exit 1
 else
-  mv new_pr main artifacts
+  mv new_pr main artifacts/
   echo no differences found between PR and previous release >> artifacts/artifact.log
 fi
 
