@@ -1,8 +1,8 @@
 on:
   pull_request:
     branches:
-    - master
-name: master Pull Request
+    - main
+name: main Pull Request
 jobs:
   test:
     name: Run tests
