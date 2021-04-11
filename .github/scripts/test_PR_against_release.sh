@@ -24,6 +24,7 @@ python -m venv venv && source venv/bin/activate && python -m pip install .
 aln2type --csv_N  \
 --gb ../NC_045512.2.gb \
 --no_gzip_json \
+--no_call_deletion \
 ../main/json \
 ../main/csv \
 ../main/summary.csv \
