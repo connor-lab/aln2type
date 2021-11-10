@@ -573,6 +573,9 @@ def write_sample_variant_csv(name, variants, sample_csv_outdir, csv_N=False):
 def remove_terminal_gapns(seq):
     return re.sub(r'(N|-)*$', '', seq)
 
+def remove_terminal_gaps(seq):
+    return re.sub(r'-*$', '', seq)
+
 def go(args):
 
     refseq = get_ref_seq(args.msa, args.ref_name)
@@ -592,7 +595,10 @@ def go(args):
             if name == args.ref_name:
                 continue
             else:
-                variants = update_variants(remove_terminal_gapns(seq.upper()), refseq)
+                if args.no_trim_terminal_N:
+                    variants = update_variants(remove_terminal_gaps(seq.upper()), refseq)
+                else:
+                    variants = update_variants(remove_terminal_gapns(seq.upper()), refseq)
 
                 print(name)
                 if variants:

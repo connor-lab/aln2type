@@ -33,6 +33,7 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --csv_N               Include Ns in sample variant CSVs
+  --no_trim_terminal_N  Don't trim Ns from sequence terminus. Default behaviour is to trim Ns and gaps BEFORE analysis
   --no_gzip_json        Don't gzip typing JSON files
   --output_unclassified
                         Retain unclassified samples in summary CSV

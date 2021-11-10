@@ -4,6 +4,7 @@ from .aln2type import go
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv_N", action='store_true', required=False, help="Include Ns in sample variant CSVs")
+    parser.add_argument("--no_trim_terminal_N", action='store_true', required=False, help="Don't trim Ns from sequence terminus. Default behaviour is to trim Ns and gaps BEFORE analysis")
     parser.add_argument("--no_gzip_json", action='store_true', required=False, help="Don't gzip typing JSON files")
     parser.add_argument("--output_unclassified", action='store_true', required=False, help="Retain unclassified samples in summary CSV")
     parser.add_argument("--no_call_deletion", action='store_true', required=False, help="Allow deleted positions to be treated as no-calls not ref")
