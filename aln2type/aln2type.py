@@ -13,6 +13,7 @@ from itertools import groupby, product
 from collections import OrderedDict
 import json
 import gzip
+import glob
 
 
 def iupac_to_base(base):
@@ -585,7 +586,7 @@ def go(args):
         sys.exit(1)
 
     variant_types = []
-    for scheme in args.typing_yaml:
+    for scheme in glob.glob(args.typing_yaml + "**/*.yml", recursive=True):
         variant_types.append(read_scheme_yaml(scheme))
 
     typing_summary = []
